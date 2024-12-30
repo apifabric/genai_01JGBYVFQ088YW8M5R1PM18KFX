@@ -1,0 +1,141 @@
+"models":
+- "classname": |-
+    Owner
+  "code": |-
+    class Owner(Base):\n\n    __tablename__ = 'owners'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    email = Column(String, nullable=True)\n    phone = Column(String, nullable=True)
+  "description": |-
+    Details of owners who hire dog walking services.
+  "name": |-
+    Owner
+- "classname": |-
+    Dog
+  "code": |-
+    class Dog(Base):\n\n    __tablename__ = 'dogs'\n\n    id = Column(Integer, primary_key=True)\n    owner_id = Column(Integer, ForeignKey('owners.id'))\n    name = Column(String, nullable=False)\n    breed = Column(String, nullable=True)\n    birth_date = Column(Date, nullable=True)
+  "description": |-
+    Details of dogs linked to their respective owners.
+  "name": |-
+    Dog
+- "classname": |-
+    Walker
+  "code": |-
+    class Walker(Base):\n\n    __tablename__ = 'walkers'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    phone = Column(String, nullable=True)\n    hire_date = Column(Date, nullable=True)
+  "description": |-
+    Details of dog walkers.
+  "name": |-
+    Walker
+- "classname": |-
+    Schedule
+  "code": |-
+    class Schedule(Base):\n\n    __tablename__ = 'schedules'\n\n    id = Column(Integer, primary_key=True)\n    walker_id = Column(Integer, ForeignKey('walkers.id'))\n    dog_id = Column(Integer, ForeignKey('dogs.id'))\n    walk_date = Column(Date)\n    start_time = Column(Time)\n    end_time = Column(Time)
+  "description": |-
+    Details of scheduled walks for dogs by walkers.
+  "name": |-
+    Schedule
+- "classname": |-
+    Pricing
+  "code": |-
+    class Pricing(Base):\n\n    __tablename__ = 'pricing'\n\n    id = Column(Integer, primary_key=True)\n    category = Column(String, nullable=False)\n    rate = Column(Float, nullable=False)
+  "description": |-
+    Pricing details for different categories of walks.
+  "name": |-
+    Pricing
+- "classname": |-
+    Payment
+  "code": |-
+    class Payment(Base):\n\n    __tablename__ = 'payments'\n\n    id = Column(Integer, primary_key=True)\n    owner_id = Column(Integer, ForeignKey('owners.id'))\n    amount = Column(Float, nullable=False)\n    payment_date = Column(Date)\n    method = Column(String, nullable=True)
+  "description": |-
+    Details of payments made by dog owners.
+  "name": |-
+    Payment
+- "classname": |-
+    Refund
+  "code": |-
+    class Refund(Base):\n\n    __tablename__ = 'refunds'\n\n    id = Column(Integer, primary_key=True)\n    payment_id = Column(Integer, ForeignKey('payments.id'))\n    refund_date = Column(Date)\n    amount = Column(Float)
+  "description": |-
+    Details of refunded amounts for payments.
+  "name": |-
+    Refund
+- "classname": |-
+    Location
+  "code": |-
+    class Location(Base):\n\n    __tablename__ = 'locations'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    address = Column(String, nullable=True)
+  "description": |-
+    Details of dog walking locations.
+  "name": |-
+    Location
+- "classname": |-
+    Tip
+  "code": |-
+    class Tip(Base):\n\n    __tablename__ = 'tips'\n\n    id = Column(Integer, primary_key=True)\n    walker_id = Column(Integer, ForeignKey('walkers.id'))\n    amount = Column(Float)\n    date_given = Column(Date)\n    owner_id = Column(Integer, ForeignKey('owners.id'))
+  "description": |-
+    Details of tips given to dog walkers.
+  "name": |-
+    Tip
+- "classname": |-
+    Feedback
+  "code": |-
+    class Feedback(Base):\n\n    __tablename__ = 'feedbacks'\n\n    id = Column(Integer, primary_key=True)\n    walker_id = Column(Integer, ForeignKey('walkers.id'))\n    owner_id = Column(Integer, ForeignKey('owners.id'))\n    feedback_text = Column(Text, nullable=True)\n    rating = Column(Integer, nullable=True)
+  "description": |-
+    Feedback from owners to the walkers.
+  "name": |-
+    Feedback
+- "classname": |-
+    Subscription
+  "code": |-
+    class Subscription(Base):\n\n    __tablename__ = 'subscriptions'\n\n    id = Column(Integer, primary_key=True)\n    owner_id = Column(Integer, ForeignKey('owners.id'))\n    start_date = Column(Date)\n    end_date = Column(Date)\n    active_status = Column(Boolean, nullable=False)
+  "description": |-
+    Subscription details of the owners for dog walking services.
+  "name": |-
+    Subscription
+- "classname": |-
+    SpecialEvent
+  "code": |-
+    class SpecialEvent(Base):\n\n    __tablename__ = 'special_events'\n\n    id = Column(Integer, primary_key=True)\n    event_name = Column(String, nullable=False)\n    date = Column(Date)\n    location_id = Column(Integer, ForeignKey('locations.id'))
+  "description": |-
+    Special events organized by the dog walking service.
+  "name": |-
+    SpecialEvent
+"name": |-
+  DogWalkingPaymentSystem
+"rules":
+- "code": |-
+    derive(sum(Owner.payment_sum) == sum(Payment.amount))
+  "description": |-
+    Calculate the total payment made by each owner.
+  "entity": |-
+    Owner
+  "name": |-
+    OwnerPaymentSum
+  "use_case": |-
+    Calculate Owner Payment Sum
+- "code": |-
+    derive(sum(Walker.average_rating) == avg(Feedback.rating))
+  "description": |-
+    Derive average rating for each walker from feedback.
+  "entity": |-
+    Walker
+  "name": |-
+    AverageRatingWalker
+  "use_case": |-
+    Calculate Walker Average Rating
+"test_data": |-
+  Imports and test data creation follows separately.
+"test_data_rows":
+- "code": |-
+    owner1 = Owner(id=1, name="John Doe", email="johndoe@example.com", phone="555-1234")
+  "test_data_row_variable": |-
+    owner1
+- "code": |-
+    owner2 = Owner(id=2, name="Jane Smith", email="janesmith@example.com", phone="555-5678")
+  "test_data_row_variable": |-
+    owner2
+- "code": |-
+    walker1 = Walker(id=1, name="Alice Walker", phone="555-8765", hire_date=date(2023, 1, 15))
+  "test_data_row_variable": |-
+    walker1
+- "code": |-
+    walker2 = Walker(id=2, name="Bob Runner", phone="555-2345", hire_date=date(2023, 3, 20))
+  "test_data_row_variable": |-
+    walker2
+"test_data_sqlite": |-
+  INSERT INTO owners (id, name, email, phone) VALUES (1, 'John Doe', 'johndoe@example.com', '555-1234');\nINSERT INTO owners (id, name, email, phone) VALUES (2, 'Jane Smith', 'janesmith@example.com', '555-5678');\n\nINSERT INTO walkers (id, name, phone, hire_date) VALUES (1, 'Alice Walker', '555-8765', '2023-01-15');\nINSERT INTO walkers (id, name, phone, hire_date) VALUES (2, 'Bob Runner', '555-2345', '2023-03-20');
